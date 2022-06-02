@@ -115,7 +115,8 @@ class video_recorder:
         out = None
 
         #fourcc = cv2.VideoWriter_fourcc(*'VP80')
-        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        #fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 
         with suppress_stderr():
             out = cv2.VideoWriter(self.filename, fourcc, self.fps, (self.width, self.height))
@@ -182,7 +183,7 @@ class video_recorder:
 
 def main():
     rec = video_recorder()
-    rec.start_recorder("recording.mp4", fps=20, scale=0.5, force_fps="True")
+    rec.start_recorder("recording.avi", fps=20, scale=0.5, force_fps="True")
 
     time.sleep(4)
 

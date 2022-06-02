@@ -22,7 +22,7 @@ dependencies:
   - python=3.7.5
   - pip=20.1
   - python-mss=6.1.0
-  - numpy=1.22.4
+  - numpy
   - opencv=4.5.5
   - pynput=1.7.3
   - pip:

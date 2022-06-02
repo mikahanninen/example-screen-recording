@@ -1,4 +1,5 @@
 # +
+import logging
 import os
 import sys
 import time
@@ -8,7 +9,8 @@ import queue
 import numpy as np
 import cv2
 import mss
-from pynput.mouse import Controller
+#from pynput.mouse import Controller
+from pynput_robocorp.mouse import Controller
 
 
 # -
@@ -56,8 +58,10 @@ class video_recorder:
         self.fps = 0
         self.force_fps = False
         self.stop_capture = None
+        self.logger = logging.getLogger(__name__)
 
     def start_recorder(self, filename="output/video.webm", max_length=60, monitor=1, scale=1.0, fps=4, force_fps="False", fourcc="VP80"):
+        self.logger.warning("start recorder")
         self.filename = filename
         self.scale = float(scale)
         self.fps = int(fps)
@@ -74,6 +78,17 @@ class video_recorder:
             self.width = int(self.monitor["width"] * self.scale)
             self.height = int(self.monitor["height"] * self.scale)
 
+        self.logger.warning(f"""screen parameters
+
+        monitor: {self.monitor}
+        left: {self.left}
+        top: {self.top}
+        right: {self.right}
+        bottom: {self.bottom}
+        width: {self.width}
+        height: {self.height}
+        """
+        )
         self.max_frame = self.fps * int(max_length)
         self.buffer = queue.Queue()
 
@@ -85,6 +100,7 @@ class video_recorder:
         self.capture_thread.start()
 
     def stop_recorder(self):
+        self.logger.warning("stop recorder")
         self.stop_capture.set()
         self.capture_thread.join()
         self.output_thread.join()
@@ -96,8 +112,10 @@ class video_recorder:
     def _write_file(self):
         cur_frame = 0
         prev_frame = None
+        out = None
 
-        fourcc = cv2.VideoWriter_fourcc(*'VP80')
+        #fourcc = cv2.VideoWriter_fourcc(*'VP80')
+        fourcc = cv2.VideoWriter_fourcc('m', 'p', '4', 'v')
 
         with suppress_stderr():
             out = cv2.VideoWriter(self.filename, fourcc, self.fps, (self.width, self.height))
@@ -164,7 +182,7 @@ class video_recorder:
 
 def main():
     rec = video_recorder()
-    rec.start_recorder("video.webm", fps=20, scale=0.5, force_fps="True")
+    rec.start_recorder("recording.mp4", fps=20, scale=0.5, force_fps="True")
 
     time.sleep(4)
 
